@@ -31,8 +31,6 @@
 //
 (function() {
 
-var gameLoop;
-
 var c   = document.getElementById('breakout');
 var ctx = c.getContext('2d');
 var w   = c.width;
@@ -64,9 +62,20 @@ var bricks = [
 // Class Game
 //
 function Game() {
+	this.loop = null;
+	
 	this.paddle = this.makeNewPaddle();
 	this.ball = this.makeNewBall();
 }
+
+Game.prototype.start = function() {
+	var that = this;
+	
+	(function eventLoop() {
+		that.loop = requestAnimationFrame(eventLoop);
+		that.update();
+	})();
+};
 
 Game.prototype.update = function() {
 	this.ball.update();
@@ -105,7 +114,7 @@ Game.prototype.ballWasMissed = function() {
 };
 
 Game.prototype.quit = function() {
-	cancelAnimationFrame(gameLoop);
+	cancelAnimationFrame(this.loop);
 };
 
 //
@@ -148,7 +157,7 @@ Ball.prototype.update = function() {
 		&& this.x + this.vx + this.r <= paddle.x + paddle.w)
 	{
 		this.vy = -this.vy;
-		this.vx = 5;
+		this.vx = Math.floor(Math.random() * (10 + 10 + 1)) + -10; // sassy bounce times for debugging
 		this.moveTo(this.x, paddle.y - this.r);
 		
 		// todo: figure out where we hit the paddle and break that into x and y vectors
@@ -249,14 +258,8 @@ Paddle.prototype.draw = function() {
 //
 // Set up the world
 //
-game = new Game();
+window.game = new Game();
 
-//
-// Start the party
-//
-(function animationLoop() {
-	gameLoop = requestAnimationFrame(animationLoop);
-	game.update();
-})();
+game.start();
 
 })();
