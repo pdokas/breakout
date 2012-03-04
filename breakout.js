@@ -31,6 +31,8 @@
 //
 (function() {
 
+var gameLoop;
+
 var c   = document.getElementById('breakout');
 var ctx = c.getContext('2d');
 var w   = c.width;
@@ -59,6 +61,54 @@ var bricks = [
 ];
 
 //
+// Class Game
+//
+function Game() {
+	this.paddle = this.makeNewPaddle();
+	this.ball = this.makeNewBall();
+}
+
+Game.prototype.update = function() {
+	this.ball.update();
+	this.paddle.update();
+};
+
+Game.prototype.makeNewPaddle = function() {
+	return new Paddle({
+		x: w / 2 - 15, y: h - 4,
+		w: 30, h: 4
+	});
+};
+
+Game.prototype.makeNewBall = function() {
+	var ball = new Ball({
+		r: 3,
+		x: w / 2, y: h - 87,
+		vx: 0, vy: 4,
+		color: Math.random() > 0.5 ? colors.pink : colors.blue
+	});
+	
+	return ball;
+};
+
+Game.prototype.getPaddle = function() {
+	return this.paddle;
+};
+
+Game.prototype.getBall = function() {
+	return this.ball;
+};
+
+Game.prototype.ballWasMissed = function() {
+	delete this.ball;
+	this.ball = this.makeNewBall();
+};
+
+Game.prototype.quit = function() {
+	cancelAnimationFrame(gameLoop);
+};
+
+//
 // Class Ball
 //
 
@@ -71,18 +121,13 @@ function Ball(opt) {
 	this.vy = opt.vy || 0;
 	
 	this.color = opt.color || colors.black;
-	
-	this.paddle = null;
-	this.pause = false;
 }
 
 Ball.prototype.debug = function() {
-	console.log('ball - x:', this.x, 'y:', this.y, '- vx:', this.vx, 'vy:', this.vy);
-	console.log('ball - bottom:', this.y + this.r, 'top:', this.y - this.r, 'left:', this.x - this.r, 'right:', this.x + this.r);
-};
-
-Ball.prototype.setPaddle = function(paddle) {
-	this.paddle = paddle;
+	console.group('ball');
+	console.log('x:', this.x, 'y:', this.y, '- vx:', this.vx, 'vy:', this.vy);
+	console.log(' - bottom:', this.y + this.r, 'top:', this.y - this.r, 'left:', this.x - this.r, 'right:', this.x + this.r);
+	console.groupEnd('ball');
 };
 
 Ball.prototype.moveTo = function(x, y) {
@@ -93,29 +138,55 @@ Ball.prototype.moveTo = function(x, y) {
 };
 
 Ball.prototype.update = function() {
+	var paddle = game.getPaddle();
+	
 	//
 	// Check for paddle hits
 	//
-	if (this.y + this.vy + this.r >= this.paddle.y
-		&& this.x + this.vx + this.r >= this.paddle.x
-		&& this.x + this.vx + this.r <= this.paddle.x + this.paddle.w)
+	if (this.y + this.vy + this.r >= paddle.y
+		&& this.x + this.vx + this.r >= paddle.x
+		&& this.x + this.vx + this.r <= paddle.x + paddle.w)
 	{
 		this.vy = -this.vy;
-		this.moveTo(this.x, this.paddle.y - this.r);
+		this.vx = 5;
+		this.moveTo(this.x, paddle.y - this.r);
 		
 		// todo: figure out where we hit the paddle and break that into x and y vectors
 	}
+
+	//
+	// Check for deaths
+	//
+	else if (this.y > h) {
+		game.ballWasMissed();
+	}
 	
 	//
-	// Check for the top of the field
+	// Prevent exceeding the top
 	//
 	else if (this.y + this.vy < this.r) {
 		this.vy = -this.vy;
 		this.moveTo(this.x + this.vx, this.r);
 	}
+
+	//
+	// Prevent going off the right
+	//
+	else if (this.x + this.vx > w - this.r) {
+		this.vx = -this.vx;
+		this.moveTo(w - this.r, this.y + this.vy);
+	}
+
+	//
+	// Prevent going off the left
+	//
+	else if (this.x + this.vx < this.r) {
+		this.vx = -this.vx;
+		this.moveTo(this.r, this.y + this.vy);
+	}
 	
 	//
-	// Normal movements
+	// Normal movement
 	//
 	else {
 		this.moveTo(this.x + this.vx, this.y + this.vy);
@@ -141,12 +212,7 @@ Ball.prototype.erase = function() {
 	}
 };
 
-var ball = new Ball({
-	r: 3,
-	x: w / 2, y: h - 87,
-	vx: 0, vy: 4,
-	color: Math.random() > 0.5 ? colors.pink : colors.blue
-});
+
 
 //
 // Class Paddle
@@ -163,8 +229,10 @@ function Paddle(opt) {
 }
 
 Paddle.prototype.debug = function() {
-	console.log('paddle - x:', this.x, 'y:', this.y);
-	console.log('paddle - bottom:', this.y + this.h, 'top:', this.y, 'left:', this.x, 'right:', this.x + this.w);
+	console.group('paddle');
+	console.log('x:', this.x, 'y:', this.y);
+	console.log(' - bottom:', this.y + this.h, 'top:', this.y, 'left:', this.x, 'right:', this.x + this.w);
+	console.groupEnd('paddle');
 };
 
 Paddle.prototype.update = function() {
@@ -176,26 +244,19 @@ Paddle.prototype.draw = function() {
 	ctx.fillRect(this.x, this.y, this.w, this.h);
 };
 
-var paddle = new Paddle({
-	x: w / 2 - 15, y: h -4,
-	w: 30, h: 4
-});
 
 
 //
-// Tell the ball about the paddle
+// Set up the world
 //
-ball.setPaddle(paddle);
+game = new Game();
 
 //
 // Start the party
 //
 (function animationLoop() {
-	requestAnimationFrame(animationLoop);
-	(function() {
-		paddle.update();
-		ball.update();
-	})();
+	gameLoop = requestAnimationFrame(animationLoop);
+	game.update();
 })();
 
 })();
