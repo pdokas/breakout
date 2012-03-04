@@ -212,13 +212,11 @@ Ball.prototype.draw = function() {
 };
 
 Ball.prototype.erase = function() {
-	if (this.vx || this.vy) {
-		ctx.clearRect(
-			this.x - this.r,
-			this.y - this.r,
-			this.r * 2, this.r * 2
-		);
-	}
+	ctx.clearRect(
+		this.x - this.r,
+		this.y - this.r,
+		this.r * 2, this.r * 2
+	);
 };
 
 
