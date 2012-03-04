@@ -93,7 +93,7 @@ Game.prototype.makeNewBall = function() {
 	var ball = new Ball({
 		r: 3,
 		x: w / 2, y: h - 87,
-		vx: 0, vy: 4,
+		vx: 0, vy: 2,
 		color: Math.random() > 0.5 ? colors.pink : colors.blue
 	});
 	
@@ -157,7 +157,7 @@ Ball.prototype.update = function() {
 		&& this.x + this.vx + this.r <= paddle.x + paddle.w)
 	{
 		this.vy = -this.vy;
-		this.vx = Math.floor(Math.random() * (10 + 10 + 1)) + -10; // sassy bounce times for debugging
+		this.vx = Math.floor(Math.random() * (6 + 6 + 1)) - 6; // sassy bounce times for debugging
 		this.moveTo(this.x, paddle.y - this.r);
 		
 		// todo: figure out where we hit the paddle and break that into x and y vectors
@@ -235,6 +235,11 @@ function Paddle(opt) {
 	this.y = opt.y;
 	
 	this.color = opt.color || colors.black;
+	
+	//
+	// Setup handlers
+	//
+	c.addEventListener('mousemove', this.mouseMoved.bind(this));
 }
 
 Paddle.prototype.debug = function() {
@@ -244,13 +249,23 @@ Paddle.prototype.debug = function() {
 	console.groupEnd('paddle');
 };
 
+Paddle.prototype.mouseMoved = function(e) {
+	this.x = e.pageX - c.offsetLeft;
+};
+
 Paddle.prototype.update = function() {
 	this.draw();
 };
 
 Paddle.prototype.draw = function() {
+	this.erase();
+	
 	ctx.fillStyle = this.color;
 	ctx.fillRect(this.x, this.y, this.w, this.h);
+};
+
+Paddle.prototype.erase = function() {
+	ctx.clearRect(0, this.y, w, this.h);
 };
 
 
