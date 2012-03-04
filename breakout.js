@@ -153,8 +153,8 @@ Ball.prototype.update = function() {
 	// Check for paddle hits
 	//
 	if (this.y + this.vy + this.r >= paddle.y
-		&& this.x + this.vx + this.r >= paddle.x
-		&& this.x + this.vx + this.r <= paddle.x + paddle.w)
+		&& this.x + this.vx + this.r > paddle.x
+		&& this.x + this.vx - this.r < paddle.x + paddle.w)
 	{
 		this.vy = -this.vy;
 		this.vx = Math.floor(Math.random() * (6 + 6 + 1)) - 6; // sassy bounce times for debugging
