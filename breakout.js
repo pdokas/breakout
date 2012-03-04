@@ -31,11 +31,6 @@
 //
 (function() {
 
-var c   = document.getElementById('breakout');
-var ctx = c.getContext('2d');
-var w   = c.width;
-var h   = c.height;
-
 var colors = {
 	pink: '#ff0084',
 	blue: '#0063dc',
@@ -64,6 +59,11 @@ var bricks = [
 function Game() {
 	this.loop = null;
 	
+	this.elt = window.elt = document.getElementById('breakout');
+	this.ctx = window.ctx = this.elt.getContext('2d');
+	this.w = this.elt.width;
+	this.h = this.elt.height;
+	
 	this.paddle = this.makeNewPaddle();
 	this.ball = this.makeNewBall();
 }
@@ -84,7 +84,7 @@ Game.prototype.update = function() {
 
 Game.prototype.makeNewPaddle = function() {
 	return new Paddle({
-		x: w / 2 - 15, y: h - 4,
+		x: this.w / 2 - 15, y: this.h - 4,
 		w: 30, h: 4
 	});
 };
@@ -92,7 +92,7 @@ Game.prototype.makeNewPaddle = function() {
 Game.prototype.makeNewBall = function() {
 	var ball = new Ball({
 		r: 3,
-		x: w / 2, y: h - 87,
+		x: this.w / 2, y: this.h - 87,
 		vx: 0, vy: 2,
 		color: Math.random() > 0.5 ? colors.pink : colors.blue
 	});
@@ -166,7 +166,7 @@ Ball.prototype.update = function() {
 	//
 	// Check for deaths
 	//
-	else if (this.y > h) {
+	else if (this.y > game.h + this.r) {
 		game.ballWasMissed();
 	}
 	
@@ -181,9 +181,9 @@ Ball.prototype.update = function() {
 	//
 	// Prevent going off the right
 	//
-	else if (this.x + this.vx > w - this.r) {
+	else if (this.x + this.vx > game.w - this.r) {
 		this.vx = -this.vx;
-		this.moveTo(w - this.r, this.y + this.vy);
+		this.moveTo(game.w - this.r, this.y + this.vy);
 	}
 
 	//
@@ -234,12 +234,14 @@ function Paddle(opt) {
 	this.x = opt.x;
 	this.y = opt.y;
 	
+	this.lastPos = {x: null, y: null};
+	
 	this.color = opt.color || colors.black;
 	
 	//
 	// Setup handlers
 	//
-	c.addEventListener('mousemove', this.mouseMoved.bind(this));
+	elt.addEventListener('mousemove', this.mouseMoved.bind(this));
 }
 
 Paddle.prototype.debug = function() {
@@ -250,7 +252,11 @@ Paddle.prototype.debug = function() {
 };
 
 Paddle.prototype.mouseMoved = function(e) {
-	this.x = e.pageX - c.offsetLeft;
+	var x = e.pageX - elt.offsetLeft;
+	
+	if (x <= game.w - this.w) {
+		this.x = x;
+	}
 };
 
 Paddle.prototype.update = function() {
@@ -262,10 +268,12 @@ Paddle.prototype.draw = function() {
 	
 	ctx.fillStyle = this.color;
 	ctx.fillRect(this.x, this.y, this.w, this.h);
+	
+	this.lastPos = {x: this.x, y: this.y};
 };
 
 Paddle.prototype.erase = function() {
-	ctx.clearRect(0, this.y, w, this.h);
+	ctx.clearRect(this.lastPos.x, this.y, this.w, this.h);
 };
 
 
