@@ -132,13 +132,6 @@ function Ball(opt) {
 	this.color = opt.color || colors.black;
 }
 
-Ball.prototype.debug = function() {
-	console.group('ball');
-	console.log('x:', this.x, 'y:', this.y, '- vx:', this.vx, 'vy:', this.vy);
-	console.log(' - bottom:', this.y + this.r, 'top:', this.y - this.r, 'left:', this.x - this.r, 'right:', this.x + this.r);
-	console.groupEnd('ball');
-};
-
 Ball.prototype.moveTo = function(x, y) {
 	this.erase();
 	
@@ -236,18 +229,8 @@ function Paddle(opt) {
 	
 	this.color = opt.color || colors.black;
 	
-	//
-	// Setup handlers
-	//
 	elt.addEventListener('mousemove', this.mouseMoved.bind(this));
 }
-
-Paddle.prototype.debug = function() {
-	console.group('paddle');
-	console.log('x:', this.x, 'y:', this.y);
-	console.log(' - bottom:', this.y + this.h, 'top:', this.y, 'left:', this.x, 'right:', this.x + this.w);
-	console.groupEnd('paddle');
-};
 
 Paddle.prototype.mouseMoved = function(e) {
 	var x = e.pageX - elt.offsetLeft;
@@ -280,7 +263,6 @@ Paddle.prototype.erase = function() {
 // Set up the world
 //
 window.game = new Game();
-
 game.start();
 
 })();
