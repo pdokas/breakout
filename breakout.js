@@ -69,11 +69,11 @@ function Game() {
 }
 
 Game.prototype.start = function() {
-	var that = this;
+	var game = this;
 	
 	(function eventLoop() {
-		that.loop = requestAnimationFrame(eventLoop);
-		that.update();
+		game.loop = requestAnimationFrame(eventLoop);
+		game.update();
 	})();
 };
 
@@ -150,14 +150,14 @@ Ball.prototype.update = function() {
 		&& this.x + this.vx - this.r < paddle.x + paddle.w)
 	{
 		this.vy = -this.vy;
-		this.vx = Math.floor(Math.random() * (6 + 6 + 1)) - 6; // sassy bounce times for debugging
-		this.moveTo(this.x, paddle.y - this.r);
 		
-		// todo: figure out where we hit the paddle and break that into x and y vectors
+		
+		
+		this.moveTo(this.x, paddle.y - this.r);
 	}
 
 	//
-	// Check for deaths
+	// Die if going through the bottom
 	//
 	else if (this.y > game.h + this.r) {
 		game.ballWasMissed();
@@ -238,6 +238,13 @@ Paddle.prototype.mouseMoved = function(e) {
 	if (x <= game.w - this.w) {
 		this.x = x;
 	}
+};
+
+Paddle.prototype.getBounds = function() {
+	return {
+		x: this.x, y: this.y,
+		w: this.w, h: this.h
+	};
 };
 
 Paddle.prototype.update = function() {
