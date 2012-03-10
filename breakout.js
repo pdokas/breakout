@@ -58,6 +58,7 @@ var bricks = [
 //
 function Game() {
 	this.loop = null;
+	this.paused = true;
 	
 	this.elt = window.elt = document.getElementById('breakout');
 	this.ctx = window.ctx = this.elt.getContext('2d');
@@ -70,6 +71,8 @@ function Game() {
 
 Game.prototype.start = function() {
 	var game = this;
+	
+	this.paused = false;
 	
 	(function eventLoop() {
 		game.loop = requestAnimationFrame(eventLoop);
@@ -93,7 +96,7 @@ Game.prototype.makeNewBall = function() {
 	var ball = new Ball({
 		r: 3,
 		x: this.w / 2, y: this.h - 87,
-		vx: 0, vy: 2,
+		vx: 0, vy: 3,
 		color: Math.random() > 0.5 ? colors.pink : colors.blue
 	});
 	
@@ -113,8 +116,13 @@ Game.prototype.ballWasMissed = function() {
 	this.ball = this.makeNewBall();
 };
 
-Game.prototype.quit = function() {
+Game.prototype.pause = function() {
 	cancelAnimationFrame(this.loop);
+	this.paused = true;
+};
+
+Game.prototype.isPaused = function() {
+	return this.paused;
 };
 
 //
@@ -208,9 +216,9 @@ Ball.prototype.draw = function() {
 
 Ball.prototype.erase = function() {
 	ctx.clearRect(
-		this.x - this.r,
-		this.y - this.r,
-		this.r * 2, this.r * 2
+		Math.floor(this.x - this.r),
+		Math.floor(this.y - this.r),
+		this.r * 2 + 1, this.r * 2 + 1
 	);
 };
 
@@ -273,5 +281,16 @@ Paddle.prototype.erase = function() {
 //
 window.game = new Game();
 game.start();
+
+document.addEventListener('click', function() {
+	if (game.isPaused()) {
+		game.start();
+	}
+	else {
+		game.pause();
+	}
+});
+
+
 
 })();
