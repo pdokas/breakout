@@ -158,7 +158,7 @@ Ball.prototype.update = function() {
 		&& this.x + this.vx - this.r < paddle.x + paddle.w)
 	{
 		var paddlePos = paddle.getBounds();
-		var percentFromPaddleCenter = 2 * ((this.x - paddlePos.x) / paddle.w - 0.5);
+		var percentFromPaddleCenter = 2 * ((this.x - paddlePos.x) / paddlePos.w - 0.5);
 		
 		this.vy = -this.vy;
 		this.vx += 2* Math.sin(Math.PI * percentFromPaddleCenter / 2);
