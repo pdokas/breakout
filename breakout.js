@@ -86,87 +86,6 @@ Game.prototype.update = function() {
 	this.paddle.update();
 };
 
-Game.prototype.makeNewPaddle = function() {
-	return new Paddle({
-		x: this.w / 2 - 15, y: this.h - 4,
-		w: 30, h: 4
-	});
-};
-
-Game.prototype.makeNewBall = function() {
-	var ball = new Ball({
-		r: 3,
-		x: this.w / 2, y: this.h - 87,
-		vx: 0, vy: 3,
-		color: Math.random() > 0.5 ? colors.pink : colors.blue
-	});
-	
-	return ball;
-};
-
-Game.prototype.makeBrickWall = function() {
-	var game = this,
-		
-		brickHeight,
-		brickPadding,
-		brickWidth,
-		brickX,
-		brickY,
-		
-		textHeight,
-		textWidth,
-		
-		rowBrickCount,
-		rowWidth;
-	
-	brickGutterX = 1;
-	brickGutterY = 6;
-	brickHeight  = 12;
-	brickPadding = 1;
-	brickX       = 3;
-	brickY       = 32;
-
-	textHeight = 9;
-	
-	rowBrickCount = 0;
-	rowWidth      = game.w - 3;
-	
-	ctx.fillStyle = colors.white;
-	ctx.font = 'bold '+textHeight+'px verdana';
-	
-	names.forEach(function(name, i) {
-		
-		textWidth  = ctx.measureText(name).width;
-		brickWidth = textWidth + brickPadding * 2;
-		
-		if (brickWidth > rowWidth - brickX) {
-			//
-			// Spread out bricks
-			//
-			
-			
-			//
-			// Reset for new row
-			//
-			rowBrickCount = 0;
-		
-			brickX = 3;
-			brickY += brickHeight + brickGutterY;
-		}
-		
-		ctx.fillStyle = (i % 2) ? colors.pink : colors.blue;
-		ctx.fillRect(brickX, brickY, brickWidth, brickHeight);
-		
-		ctx.fillStyle = colors.white;
-		ctx.fillText(name, brickX + brickPadding, brickY + textHeight);
-		
-		brickX += brickWidth + brickGutterX;
-		
-		rowBrickCount++;
-		
-	});
-};
-
 Game.prototype.getPaddle = function() {
 	return this.paddle;
 };
@@ -187,6 +106,131 @@ Game.prototype.pause = function() {
 
 Game.prototype.isPaused = function() {
 	return this.paused;
+};
+
+Game.prototype.makeNewPaddle = function() {
+	return new Paddle({
+		x: this.w / 2 - 15, y: this.h - 4,
+		w: 30, h: 4
+	});
+};
+
+Game.prototype.makeNewBall = function() {
+	var ball = new Ball({
+		r: 3,
+		x: this.w / 2, y: this.h - 87,
+		vx: 0, vy: 3,
+		color: Math.random() > 0.5 ? colors.pink : colors.blue
+	});
+	
+	return ball;
+};
+
+Game.prototype.makeBrickWall = function() {
+	var game = this,
+		bricks = [],
+		brick,
+		
+		brickX,
+		brickY,
+		brickGutterX,
+		brickGutterY,
+		brickHeight,
+		brickWidth,
+		
+		rowBrickCount,
+		rowWidth;
+	
+	brickX       = 3;
+	brickY       = 32;
+	brickGutterX = 1;
+	brickGutterY = 6;
+	brickHeight  = 12;
+	
+	rowBrickCount = 0;
+	rowWidth      = game.w - 3;
+	
+	names.forEach(function(name, i) {
+		
+		brick = new Brick({
+			x: brickX,
+			y: brickY,
+			h: brickHeight,
+			text: name,
+			color: (i % 2) ? colors.pink : colors.blue
+		});
+		
+		bricks.push(brick);
+		
+		brickWidth = brick.getComputedWidth();
+		
+		if (brickWidth > rowWidth - brickX) {
+			//
+			// Spread out bricks
+			//
+			
+			//
+			// Reset for new row
+			//
+			rowBrickCount = 0;
+			
+			brickX = 3;
+			brickY += brickHeight + brickGutterY;
+			
+			brick.moveTo(brickX, brickY);
+		}
+		
+		brick.draw();
+		
+		brickX += brickWidth + brickGutterX;
+		rowBrickCount++;
+		
+	});
+	
+	return bricks;
+};
+
+function Brick(opt) {
+	this.x = opt.x;
+	this.y = opt.y;
+	this.h = opt.h;
+	
+	this.color = opt.color;
+	this.textColor = opt.textColor || colors.white;
+	
+	this.text = opt.text || '';
+	this.textH = opt.textH || 9;
+	
+	this.brickPadding = opt.brickPadding || 1;
+}
+
+Brick.prototype.moveTo = function(x, y) {
+	this.erase();
+	
+	this.x = x;
+	this.y = y;
+};
+
+Brick.prototype.draw = function() {
+	ctx.font = 'bold '+this.textH+'px verdana';
+	
+	ctx.fillStyle = this.color;
+	ctx.fillRect(this.x, this.y, this.getComputedWidth(), this.h);
+	
+	ctx.fillStyle = this.textColor;
+	ctx.fillText(this.text, this.x + this.brickPadding, this.y + this.textH);
+};
+
+Brick.prototype.getComputedWidth = function() {
+	if (!this.w) {
+		this.w = ctx.measureText(this.text).width + this.brickPadding * 2;
+	}
+	
+	return this.w;
+};
+
+Brick.prototype.erase = function() {
+	ctx.clearRect(this.x, this.y, this.getComputedWidth(), this.h);
 };
 
 //
