@@ -127,31 +127,19 @@ Game.prototype.makeNewBall = function() {
 };
 
 Game.prototype.makeBrickWall = function() {
-	var game = this,
-		bricks = [],
+	var game    = this,
+		bricks  = [],
+		row     = [],
 		brick,
 		
-		brickX,
-		brickY,
-		brickGutterX,
-		brickGutterY,
-		brickHeight,
-		brickWidth,
-		
-		rowBrickCount,
-		rowWidth;
-	
-	brickX       = 3;
-	brickY       = 32;
-	brickGutterX = 1;
-	brickGutterY = 6;
-	brickHeight  = 12;
-	
-	rowBrickCount = 0;
-	rowWidth      = game.w - 3;
+		brickX       = 3,
+		brickY       = 32,
+		brickGutterX = 1,
+		brickGutterY = 6,
+		brickHeight  = 12,
+		rowWidth     = game.w - 3;
 	
 	names.forEach(function(name, i) {
-		
 		brick = new Brick({
 			x: brickX,
 			y: brickY,
@@ -160,11 +148,10 @@ Game.prototype.makeBrickWall = function() {
 			color: (i % 2) ? colors.pink : colors.blue
 		});
 		
-		bricks.push(brick);
-		
-		brickWidth = brick.getComputedWidth();
-		
-		if (brickWidth > rowWidth - brickX) {
+		//
+		// If brick won't fit...
+		//
+		if (brick.getComputedWidth() > rowWidth - brickX) {
 			//
 			// Spread out bricks
 			//
@@ -172,7 +159,8 @@ Game.prototype.makeBrickWall = function() {
 			//
 			// Reset for new row
 			//
-			rowBrickCount = 0;
+			bricks.push(row);
+			row = [];
 			
 			brickX = 3;
 			brickY += brickHeight + brickGutterY;
@@ -180,11 +168,10 @@ Game.prototype.makeBrickWall = function() {
 			brick.moveTo(brickX, brickY);
 		}
 		
+		row.push(brick);
 		brick.draw();
 		
-		brickX += brickWidth + brickGutterX;
-		rowBrickCount++;
-		
+		brickX += brick.getComputedWidth() + brickGutterX;
 	});
 	
 	return bricks;
