@@ -119,7 +119,8 @@ Game.prototype.makeBrickWall = function() {
 		rowBrickCount,
 		rowWidth;
 	
-	brickGutter  = 1;
+	brickGutterX = 1;
+	brickGutterY = 6;
 	brickHeight  = 12;
 	brickPadding = 1;
 	brickX       = 3;
@@ -150,7 +151,7 @@ Game.prototype.makeBrickWall = function() {
 			rowBrickCount = 0;
 		
 			brickX = 3;
-			brickY += brickHeight + brickGutter;
+			brickY += brickHeight + brickGutterY;
 		}
 		
 		ctx.fillStyle = (i % 2) ? colors.pink : colors.blue;
@@ -159,7 +160,7 @@ Game.prototype.makeBrickWall = function() {
 		ctx.fillStyle = colors.white;
 		ctx.fillText(name, brickX + brickPadding, brickY + textHeight);
 		
-		brickX += brickWidth + brickGutter;
+		brickX += brickWidth + brickGutterX;
 		
 		rowBrickCount++;
 		
