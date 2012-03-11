@@ -149,16 +149,27 @@ Game.prototype.makeBrickWall = function() {
 		});
 		
 		//
-		// If brick won't fit...
+		// Reflow the row if it's the end of a row or the end of the names
 		//
-		if (brick.getComputedWidth() > rowWidth - brickX) {
+		if (brick.getComputedWidth() > rowWidth - brickX || i === names.length - 1) {
+			var extraWidth = rowWidth - brickX;
+			var extraWidthPerBrick = extraWidth / (row.length - 1);
+			
 			//
 			// Spread out bricks
 			//
-			
-			//
-			// Reset for new row
-			//
+			// row.forEach(function(brick, i) {
+			for (var j = row.length - 1; j >= 0; j--) {
+				brickToMove = row[j];
+				brickToMove.moveTo(brickToMove.x + j * extraWidthPerBrick, brickToMove.y);
+				brickToMove.draw();
+			}
+		}
+		
+		//
+		// Make a new row if the last one just ended
+		//
+		if (brick.getComputedWidth() > rowWidth - brickX) {
 			bricks.push(row);
 			row = [];
 			
@@ -201,9 +212,11 @@ Brick.prototype.moveTo = function(x, y) {
 Brick.prototype.draw = function() {
 	ctx.font = 'bold '+this.textH+'px verdana';
 	
+	// Draw the background
 	ctx.fillStyle = this.color;
 	ctx.fillRect(this.x, this.y, this.getComputedWidth(), this.h);
 	
+	// Draw the text
 	ctx.fillStyle = this.textColor;
 	ctx.fillText(this.text, this.x + this.brickPadding, this.y + this.textH);
 };
