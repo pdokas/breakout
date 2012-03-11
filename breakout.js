@@ -32,8 +32,8 @@
 (function() {
 
 var colors = {
-	pink: '#ff0084',
-	blue: '#0063dc',
+	pink:  '#ff0084',
+	blue:  '#0063dc',
 	white: '#ffffff',
 	black: '#000000'
 };
@@ -44,7 +44,7 @@ var names = [
 	'Timothy Denike', 'Phil King', 'Daniel Eiba', 'Fiona Miller', 'Denise Leung',
 	'Trevor Hartsell', 'Eric Gelinas', 'Markus Spiering', 'Henry Lyne', 'Stephen Woods',
 	'Jamal Fanaian', 'Phillip Moore', 'Mike Deerkoski', 'Bridget Lewis', 'Chris Berry',
-	'Sergey Morozov', 'Steven Loyd', 'Cindy Li', 'Tim Miller', 'Brad Peralta',
+	'Sergey Morozov', 'Steven Lloyd', 'Cindy Li', 'Tim Miller', 'Brad Peralta',
 	'Ben Freeman', 'Chris Hamilton', 'Matt Jennings', 'Peter Welch', 'Nick Rettinghouse',
 	'Phil Dokas', 'Hugo Haas', 'Marc Perry', 'William Stubbs', 'Georges Haddad', 'Joshua Cohen'
 ];
@@ -67,6 +67,7 @@ function Game() {
 	
 	this.paddle = this.makeNewPaddle();
 	this.ball = this.makeNewBall();
+	this.bricks = this.makeBrickWall();
 }
 
 Game.prototype.start = function() {
@@ -101,6 +102,68 @@ Game.prototype.makeNewBall = function() {
 	});
 	
 	return ball;
+};
+
+Game.prototype.makeBrickWall = function() {
+	var game = this,
+		
+		brickHeight,
+		brickPadding,
+		brickWidth,
+		brickX,
+		brickY,
+		
+		textHeight,
+		textWidth,
+		
+		rowBrickCount,
+		rowWidth;
+	
+	brickGutter  = 1;
+	brickHeight  = 12;
+	brickPadding = 1;
+	brickX       = 3;
+	brickY       = 32;
+
+	textHeight = 9;
+	
+	rowBrickCount = 0;
+	rowWidth      = game.w - 3;
+	
+	ctx.fillStyle = colors.white;
+	ctx.font = 'bold '+textHeight+'px verdana';
+	
+	names.forEach(function(name, i) {
+		
+		textWidth  = ctx.measureText(name).width;
+		brickWidth = textWidth + brickPadding * 2;
+		
+		if (brickWidth > rowWidth - brickX) {
+			//
+			// Spread out bricks
+			//
+			
+			
+			//
+			// Reset for new row
+			//
+			rowBrickCount = 0;
+		
+			brickX = 3;
+			brickY += brickHeight + brickGutter;
+		}
+		
+		ctx.fillStyle = (i % 2) ? colors.pink : colors.blue;
+		ctx.fillRect(brickX, brickY, brickWidth, brickHeight);
+		
+		ctx.fillStyle = colors.white;
+		ctx.fillText(name, brickX + brickPadding, brickY + textHeight);
+		
+		brickX += brickWidth + brickGutter;
+		
+		rowBrickCount++;
+		
+	});
 };
 
 Game.prototype.getPaddle = function() {
