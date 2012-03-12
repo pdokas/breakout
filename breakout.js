@@ -50,9 +50,7 @@ var names = [
 	'Phil Dokas', 'Hugo Haas', 'Marc Perry', 'William Stubbs', 'Georges Haddad', 'Joshua Cohen'
 ];
 
-var bricks = [
-	// Coming soon to a game near you!
-];
+
 
 //
 // Class Game
@@ -67,7 +65,7 @@ function Game() {
 	this.h = this.elt.height;
 	
 	this.paddle = this.makeNewPaddle();
-	this.ball = this.makeNewBall();
+	this.ball   = this.makeNewBall();
 	this.bricks = this.makeBrickWall();
 }
 
@@ -93,6 +91,10 @@ Game.prototype.getPaddle = function() {
 
 Game.prototype.getBall = function() {
 	return this.ball;
+};
+
+Game.prototype.getBricks = function() {
+	return this.bricks;
 };
 
 Game.prototype.ballWasMissed = function() {
@@ -128,9 +130,9 @@ Game.prototype.makeNewBall = function() {
 };
 
 Game.prototype.makeBrickWall = function() {
-	var game    = this,
-		bricks  = [],
-		row     = [],
+	var game = this,
+		wall = [],
+		row  = [],
 		brick,
 		
 		brickX       = 3,
@@ -187,7 +189,7 @@ Game.prototype.makeBrickWall = function() {
 			// Make a new row if the last one just ended
 			//
 			if (brickIsTooWideForRow) {
-				bricks.push(row);
+				wall.push(row);
 				row = [];
 
 				brickX = 3;
@@ -205,8 +207,14 @@ Game.prototype.makeBrickWall = function() {
 		brick.draw();
 	});
 	
-	return bricks;
+	return wall;
 };
+
+
+
+//
+// Class Brick
+//
 
 function Brick(opt) {
 	this.x = opt.x;
@@ -254,6 +262,8 @@ Brick.prototype.getComputedWidth = function() {
 Brick.prototype.erase = function() {
 	ctx.clearRect(this.x, this.y, this.getComputedWidth(), this.h);
 };
+
+
 
 //
 // Class Ball
