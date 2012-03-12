@@ -39,6 +39,7 @@ var colors = {
 };
 
 var names = [
+	'Chronic Rehab', 'brought to', 'you by:',
 	'Peter Norby', 'Manny Ventura', 'Gilad Raphaelli', 'Scott Schiller', 'Zack Sheppard',
 	'Daniel Bogan', 'David Fusco', 'Phil Yu', 'Kay Kremerskothen', 'Jenny Mette', 'Ross Harmes',
 	'Timothy Denike', 'Phil King', 'Daniel Eiba', 'Fiona Miller', 'Denise Leung',
@@ -140,6 +141,12 @@ Game.prototype.makeBrickWall = function() {
 		rowWidth     = game.w - 3;
 	
 	names.forEach(function(name, i) {
+		var extraWidthPerBrick,
+			brickIsTooWideForRow = false,
+			brickIsTheFinalBrick = false,
+			brickToMove,
+			j;
+		
 		brick = new Brick({
 			x: brickX,
 			y: brickY,
@@ -148,41 +155,54 @@ Game.prototype.makeBrickWall = function() {
 			color: (i % 2) ? colors.pink : colors.blue
 		});
 		
+		if (brick.getComputedWidth() > rowWidth - brickX) {
+			brickIsTooWideForRow = true;
+		}
+		
+		if (i === names.length - 1) {
+			brickIsTheFinalBrick = true;
+		}
+		
 		//
 		// Reflow the row if it's the end of a row or the end of the names
 		//
-		if (brick.getComputedWidth() > rowWidth - brickX || i === names.length - 1) {
-			var extraWidth = rowWidth - brickX;
-			var extraWidthPerBrick = extraWidth / (row.length - 1);
+		if (brickIsTooWideForRow || brickIsTheFinalBrick) {
+			if (brickIsTheFinalBrick) {
+				row.push(brick);
+				brickX += brick.getComputedWidth() + brickGutterX;
+			}
+			
+			extraWidthPerBrick = (rowWidth - brickX) / (row.length - 1);
 			
 			//
 			// Spread out bricks
 			//
-			// row.forEach(function(brick, i) {
-			for (var j = row.length - 1; j >= 0; j--) {
+			for (j = row.length - 1; j >= 0; j--) {
 				brickToMove = row[j];
 				brickToMove.moveTo(brickToMove.x + j * extraWidthPerBrick, brickToMove.y, true);
 				brickToMove.draw();
 			}
+			
+			//
+			// Make a new row if the last one just ended
+			//
+			if (brickIsTooWideForRow) {
+				bricks.push(row);
+				row = [];
+
+				brickX = 3;
+				brickY += brickHeight + brickGutterY;
+
+				brick.moveTo(brickX, brickY);
+			}
 		}
 		
-		//
-		// Make a new row if the last one just ended
-		//
-		if (brick.getComputedWidth() > rowWidth - brickX) {
-			bricks.push(row);
-			row = [];
-			
-			brickX = 3;
-			brickY += brickHeight + brickGutterY;
-			
-			brick.moveTo(brickX, brickY);
+		if (!brickIsTheFinalBrick) {
+			row.push(brick);
+			brickX += brick.getComputedWidth() + brickGutterX;
 		}
 		
-		row.push(brick);
 		brick.draw();
-		
-		brickX += brick.getComputedWidth() + brickGutterX;
 	});
 	
 	return bricks;
