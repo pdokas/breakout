@@ -161,7 +161,7 @@ Game.prototype.makeBrickWall = function() {
 			// row.forEach(function(brick, i) {
 			for (var j = row.length - 1; j >= 0; j--) {
 				brickToMove = row[j];
-				brickToMove.moveTo(brickToMove.x + j * extraWidthPerBrick, brickToMove.y);
+				brickToMove.moveTo(brickToMove.x + j * extraWidthPerBrick, brickToMove.y, true);
 				brickToMove.draw();
 			}
 		}
@@ -202,8 +202,10 @@ function Brick(opt) {
 	this.brickPadding = opt.brickPadding || 1;
 }
 
-Brick.prototype.moveTo = function(x, y) {
-	this.erase();
+Brick.prototype.moveTo = function(x, y, cleanup) {
+	if (cleanup) {
+		this.erase();
+	}
 	
 	this.x = x;
 	this.y = y;
