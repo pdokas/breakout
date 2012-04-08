@@ -39,15 +39,14 @@ var colors = {
 };
 
 var names = [
-	'Chronic Rehab', 'brought to', 'you by:',
-	'Peter Norby', 'Manny Ventura', 'Gilad Raphaelli', 'Scott Schiller', 'Zack Sheppard',
-	'Daniel Bogan', 'David Fusco', 'Phil Yu', 'Kay Kremerskothen', 'Jenny Mette', 'Ross Harmes',
-	'Timothy Denike', 'Phil King', 'Daniel Eiba', 'Fiona Miller', 'Denise Leung',
+	'Chronic Rehab', 'brought to', 'you by:', 'Peter Norby', 'Scott Schiller', 'Zack Sheppard',
+	'Daniel Bogan', 'David Fusco', 'Phil Yu', 'Kay Kremerskothen', 'Jenny Mette',
+	'Ross Harmes', 'Timothy Denike', 'Phil King', 'Daniel Eiba', 'Denise Leung',
 	'Trevor Hartsell', 'Eric Gelinas', 'Markus Spiering', 'Henry Lyne', 'Stephen Woods',
-	'Jamal Fanaian', 'Phillip Moore', 'Mike Deerkoski', 'Bridget Lewis', 'Chris Berry',
-	'Sergey Morozov', 'Steven Lloyd', 'Cindy Li', 'Tim Miller', 'Brad Peralta',
-	'Ben Freeman', 'Chris Hamilton', 'Matt Jennings', 'Peter Welch', 'Nick Rettinghouse',
-	'Phil Dokas', 'Hugo Haas', 'Marc Perry', 'William Stubbs', 'Georges Haddad', 'Joshua Cohen'
+	'Jamal Fanaian', 'Phillip Moore', 'Mike Deerkoski', 'Chris Berry', 'Sergey Morozov',
+	'Cindy Li', 'Tim Miller', 'Brad Peralta', 'Chris Hamilton', 'Matt Jennings', 'Peter Welch',
+	'Phil Dokas', 'Hugo Haas', 'Marc Perry', 'William Stubbs', 'Georges Haddad',
+	'Joshua Cohen'
 ];
 
 
@@ -113,7 +112,7 @@ Game.prototype.isPaused = function() {
 
 Game.prototype.makeNewPaddle = function() {
 	return new Paddle({
-		x: this.w / 2 - 15, y: this.h - 4,
+		x: this.w / 2 - /* 15 */ 150, y: this.h - 4,
 		w: 30, h: 4
 	});
 };
