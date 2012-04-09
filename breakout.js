@@ -287,7 +287,8 @@ Ball.prototype.moveTo = function(x, y) {
 };
 
 Ball.prototype.update = function() {
-	var paddle = game.getPaddle();
+	var paddle = game.getPaddle(),
+		bricks = game.getBricks();
 	
 	//
 	// Check for paddle hits
@@ -300,9 +301,18 @@ Ball.prototype.update = function() {
 		var percentFromPaddleCenter = 2 * ((this.x - paddlePos.x) / paddlePos.w - 0.5);
 		
 		this.vy = -this.vy;
-		this.vx += 2* Math.sin(Math.PI * percentFromPaddleCenter / 2);
+		this.vx += 2 * Math.sin(Math.PI * percentFromPaddleCenter / 2);
 		
 		this.moveTo(this.x, paddle.y - this.r);
+	}
+	
+	//
+	// Check for brick hits
+	//
+	else if (false) {
+		bricks.forEach(function(brick, i) {
+			
+		});
 	}
 
 	//
