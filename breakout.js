@@ -168,7 +168,7 @@ Game.prototype.makeBrickWall = function() {
 		// Reflow the row if it's the end of a row or the end of the names
 		//
 		if (brickIsTooWideForRow || brickIsTheFinalBrick) {
-			if (brickIsTheFinalBrick) {
+			if (!brickIsTooWideForRow && brickIsTheFinalBrick) {
 				row.push(brick);
 				brickX += brick.getComputedWidth() + brickGutterX;
 			}
