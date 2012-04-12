@@ -263,7 +263,7 @@ Brick.prototype.getComputedWidth = function() {
 };
 
 Brick.prototype.erase = function() {
-	ctx.clearRect(this.x - 3, this.y, this.getComputedWidth() + 3, this.h);
+	ctx.clearRect(Math.floor(this.x), this.y, this.getComputedWidth() + 1, this.h);
 };
 
 
