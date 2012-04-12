@@ -178,7 +178,7 @@ Game.prototype.makeBrickWall = function() {
 			//
 			// Spread out bricks
 			//
-			for (j = row.length - 1; j >= 0; j--) {
+			for (j = row.length - 1; j > 0; j--) {
 				brickToMove = row[j];
 				brickToMove.moveTo(brickToMove.x + j * extraWidthPerBrick, brickToMove.y, true);
 				brickToMove.draw();
@@ -201,6 +201,10 @@ Game.prototype.makeBrickWall = function() {
 		if (!brickIsTheFinalBrick) {
 			row.push(brick);
 			brickX += brick.getComputedWidth() + brickGutterX;
+		}
+		else if (brickIsTooWideForRow && brickIsTheFinalBrick) {
+			row.push(brick);
+			wall.push(row);
 		}
 		
 		brick.draw();
