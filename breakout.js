@@ -318,7 +318,21 @@ Ball.prototype.update = function() {
 				&& this.x + this.vx + this.r > brick.x
 				&& this.x + this.vx - this.r < brick.x + brick.w)
 			{
-				this.vy = -this.vy;
+				//
+				// Side collision
+				//
+				if (this.x + this.vx < brick.x
+					|| this.x + this.vx > brick.x + brick.w)
+				{
+					this.vx = -this.vx;
+				}
+				
+				//
+				// Top/bottom collision
+				//
+				else {
+					this.vy = -this.vy;
+				}
 
 				this.moveTo(this.x, this.y);
 				
