@@ -293,87 +293,96 @@ Ball.prototype.moveTo = function(x, y) {
 Ball.prototype.update = function() {
 	var paddle = game.getPaddle(),
 		bricks = game.getBricks(),
-		ball   = this;
+		row,
+		brick,
+		x, y,
+		brickCollision = false;
 	
 	//
 	// Check for brick hits
 	//
-	// else if () {
-		bricks.forEach(function(row, y) {
-			row.forEach(function(brick, x) {
-				if (ball.y + ball.vy + ball.r >= brick.y
-					&& ball.y + ball.vy - ball.r <= brick.y + brick.h
-					&& ball.x + ball.vx + ball.r > brick.x
-					&& ball.x + ball.vx - ball.r < brick.x + brick.w)
-				{
-					ball.vy = -ball.vy;
-					
-					console.log('brick:', brick);
-					console.log('ball: ', ball);
-					
-					// debugger;
-
-					ball.moveTo(ball.x, ball.y);
-					
-					row.splice(x, 1);
-					brick.erase();
-				}
-			});
-		});
-	// }
-	
-	//
-	// Check for paddle hits
-	//
-	if (this.y + this.vy + this.r >= paddle.y
-		&& this.x + this.vx + this.r > paddle.x
-		&& this.x + this.vx - this.r < paddle.x + paddle.w)
-	{
-		var paddlePos = paddle.getBounds();
-		var percentFromPaddleCenter = 2 * ((this.x - paddlePos.x) / paddlePos.w - 0.5);
+	for (y = bricks.length - 1; y >= 0; y--) {
+		row = bricks[y];
 		
-		this.vy = -this.vy;
-		this.vx += 2 * Math.sin(Math.PI * percentFromPaddleCenter / 2);
+		for (x = row.length - 1; x >= 0; x--) {
+			brick = row[x];
+			
+			if (this.y + this.vy + this.r >= brick.y
+				&& this.y + this.vy - this.r <= brick.y + brick.h
+				&& this.x + this.vx + this.r > brick.x
+				&& this.x + this.vx - this.r < brick.x + brick.w)
+			{
+				this.vy = -this.vy;
+
+				this.moveTo(this.x, this.y);
+				
+				row.splice(x, 1);
+				brick.erase();
+				
+				brickCollision = true;
+				break;
+			}
+		}
 		
-		this.moveTo(this.x, paddle.y - this.r);
+		if (brickCollision) {
+			break;
+		}
 	}
 
-	//
-	// Die if going through the bottom
-	//
-	else if (this.y > game.h + this.r) {
-		game.ballWasMissed();
-	}
+	if (!brickCollision) {
+		//
+		// Check for paddle hits
+		//
+		if (this.y + this.vy + this.r >= paddle.y
+			&& this.x + this.vx + this.r > paddle.x
+			&& this.x + this.vx - this.r < paddle.x + paddle.w)
+		{
+			var paddlePos = paddle.getBounds();
+			var percentFromPaddleCenter = 2 * ((this.x - paddlePos.x) / paddlePos.w - 0.5);
+		
+			this.vy = -this.vy;
+			this.vx += 2 * Math.sin(Math.PI * percentFromPaddleCenter / 2);
+		
+			this.moveTo(this.x, paddle.y - this.r);
+		}
+
+		//
+		// Die if going through the bottom
+		//
+		else if (this.y > game.h + this.r) {
+			game.ballWasMissed();
+		}
 	
-	//
-	// Prevent exceeding the top
-	//
-	else if (this.y + this.vy < this.r) {
-		this.vy = -this.vy;
-		this.moveTo(this.x + this.vx, this.r);
-	}
+		//
+		// Prevent exceeding the top
+		//
+		else if (this.y + this.vy < this.r) {
+			this.vy = -this.vy;
+			this.moveTo(this.x + this.vx, this.r);
+		}
 
-	//
-	// Prevent going off the right
-	//
-	else if (this.x + this.vx > game.w - this.r) {
-		this.vx = -this.vx;
-		this.moveTo(game.w - this.r, this.y + this.vy);
-	}
+		//
+		// Prevent going off the right
+		//
+		else if (this.x + this.vx > game.w - this.r) {
+			this.vx = -this.vx;
+			this.moveTo(game.w - this.r, this.y + this.vy);
+		}
 
-	//
-	// Prevent going off the left
-	//
-	else if (this.x + this.vx < this.r) {
-		this.vx = -this.vx;
-		this.moveTo(this.r, this.y + this.vy);
-	}
+		//
+		// Prevent going off the left
+		//
+		else if (this.x + this.vx < this.r) {
+			this.vx = -this.vx;
+			this.moveTo(this.r, this.y + this.vy);
+		}
 	
-	//
-	// Normal movement
-	//
-	else {
-		this.moveTo(this.x + this.vx, this.y + this.vy);
+		//
+		// Normal movement
+		//
+		else {
+			this.moveTo(this.x + this.vx, this.y + this.vy);
+		}
 	}
 
 	this.draw();
