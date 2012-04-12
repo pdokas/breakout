@@ -313,8 +313,8 @@ Ball.prototype.update = function() {
 		for (x = row.length - 1; x >= 0; x--) {
 			brick = row[x];
 			
-			if (this.y + this.vy + this.r >= brick.y
-				&& this.y + this.vy - this.r <= brick.y + brick.h
+			if (this.y + this.vy + this.r > brick.y
+				&& this.y + this.vy - this.r < brick.y + brick.h
 				&& this.x + this.vx + this.r > brick.x
 				&& this.x + this.vx - this.r < brick.x + brick.w)
 			{
