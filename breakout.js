@@ -101,6 +101,12 @@ Game.prototype.ballWasMissed = function() {
 	this.ball = this.makeNewBall();
 };
 
+Game.prototype.restart = function() {
+	this.paddle = this.makeNewPaddle();
+	this.ball   = this.makeNewBall();
+	this.bricks = this.makeBrickWall();
+};
+
 Game.prototype.pause = function() {
 	cancelAnimationFrame(this.loop);
 	this.paused = true;
@@ -318,6 +324,14 @@ Ball.prototype.update = function() {
 				
 				row.splice(x, 1);
 				brick.erase();
+				
+				if (row.length === 0) {
+					bricks.splice(y, 1);
+				}
+				
+				if (bricks.length === 0) {
+					game.restart();
+				}
 				
 				brickCollision = true;
 				break;
