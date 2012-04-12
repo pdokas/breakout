@@ -434,13 +434,13 @@ function Paddle(opt) {
 	
 	this.color = opt.color || colors.black;
 	
-	elt.addEventListener('mousemove', this.mouseMoved.bind(this));
+	document.addEventListener('mousemove', this.mouseMoved.bind(this));
 }
 
 Paddle.prototype.mouseMoved = function(e) {
 	var x = e.pageX - elt.offsetLeft;
-	
-	if (x <= game.w - this.w) {
+
+	if (x <= game.w - this.w && x > 0) {
 		this.x = x;
 	}
 };
