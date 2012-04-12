@@ -259,7 +259,7 @@ Brick.prototype.getComputedWidth = function() {
 };
 
 Brick.prototype.erase = function() {
-	ctx.clearRect(this.x, this.y, this.getComputedWidth(), this.h);
+	ctx.clearRect(this.x - 3, this.y, this.getComputedWidth() + 3, this.h);
 };
 
 
@@ -288,7 +288,35 @@ Ball.prototype.moveTo = function(x, y) {
 
 Ball.prototype.update = function() {
 	var paddle = game.getPaddle(),
-		bricks = game.getBricks();
+		bricks = game.getBricks(),
+		ball   = this;
+	
+	//
+	// Check for brick hits
+	//
+	// else if () {
+		bricks.forEach(function(row, y) {
+			row.forEach(function(brick, x) {
+				if (ball.y + ball.vy + ball.r >= brick.y
+					&& ball.y + ball.vy - ball.r <= brick.y + brick.h
+					&& ball.x + ball.vx + ball.r > brick.x
+					&& ball.x + ball.vx - ball.r < brick.x + brick.w)
+				{
+					ball.vy = -ball.vy;
+					
+					console.log('brick:', brick);
+					console.log('ball: ', ball);
+					
+					// debugger;
+
+					ball.moveTo(ball.x, ball.y);
+					
+					row.splice(x, 1);
+					brick.erase();
+				}
+			});
+		});
+	// }
 	
 	//
 	// Check for paddle hits
@@ -304,15 +332,6 @@ Ball.prototype.update = function() {
 		this.vx += 2 * Math.sin(Math.PI * percentFromPaddleCenter / 2);
 		
 		this.moveTo(this.x, paddle.y - this.r);
-	}
-	
-	//
-	// Check for brick hits
-	//
-	else if (false) {
-		bricks.forEach(function(brick, i) {
-			
-		});
 	}
 
 	//
