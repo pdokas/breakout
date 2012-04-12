@@ -118,7 +118,7 @@ Game.prototype.isPaused = function() {
 
 Game.prototype.makeNewPaddle = function() {
 	return new Paddle({
-		x: this.w / 2 - /* 15 */ 150, y: this.h - 4,
+		x: this.w / 2 - 15, y: this.h - 4,
 		w: 30, h: 4
 	});
 };
