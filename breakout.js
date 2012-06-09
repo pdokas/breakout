@@ -42,9 +42,9 @@ var names = [
 	'Chronic Rehab', 'brought to', 'you by:', 'Peter Norby', 'Scott Schiller', 'Daniel Bogan',
 	'David Fusco', 'Emily Yiu', 'Phil Yu', 'Kay Kremerskothen', 'Jenny Mette', 'Ross Harmes',
 	'Timothy Denike', 'Phil King', 'Daniel Eiba', 'Denise Leung', 'Trevor Hartsell', 'Eric Gelinas',
-	'Markus Spiering', 'Henry Lyne', 'Stephen Woods', 'Jamal Fanaian', 'Chris Berry', 'Sergey Morozov',
-	'Cindy Li', 'Tim Miller', 'Brad Peralta', 'Chris Hamilton', 'Matt Jennings', 'Peter Welch',
-	'Phil Dokas', 'Hugo Haas', 'Marc Perry', 'William Stubbs', 'Georges Haddad',
+	'Markus Spiering', 'Henry Lyne', 'Stephen Woods', 'Jamal Fanaian', 'Chris Berry',
+	'Sergey Morozov', 'Cindy Li', 'Tim Miller', 'Brad Peralta', 'Chris Hamilton', 'Matt Jennings',
+	'Peter Welch', 'Phil Dokas', 'Hugo Haas', 'Marc Perry', 'William Stubbs', 'Georges Haddad',
 	'Joshua Cohen', 'Erin Wermuth', 'John Ubante', 'Brett Wayn', 'Anna Thomas',
 	'Sean Perkins'
 ];
@@ -80,8 +80,13 @@ Game.prototype.start = function() {
 };
 
 Game.prototype.update = function() {
-	this.ball.update();
-	this.paddle.update();
+	if (!this.ball.update()) {
+		return false;
+	}
+	
+	if (!this.paddle.update()) {
+		return false;
+	}
 };
 
 Game.prototype.getPaddle = function() {
@@ -102,9 +107,13 @@ Game.prototype.ballWasMissed = function() {
 };
 
 Game.prototype.restart = function() {
+	this.erase();
+	
 	this.paddle = this.makeNewPaddle();
 	this.ball   = this.makeNewBall();
 	this.bricks = this.makeBrickWall();
+	
+	return false;
 };
 
 Game.prototype.pause = function() {
@@ -115,6 +124,10 @@ Game.prototype.pause = function() {
 Game.prototype.isPaused = function() {
 	return this.paused;
 };
+
+Game.prototype.erase = function() {
+	this.elt.setAttribute('width', this.elt.getAttribute('width'));
+}
 
 Game.prototype.makeNewPaddle = function() {
 	return new Paddle({
@@ -344,7 +357,7 @@ Ball.prototype.update = function() {
 				}
 				
 				if (bricks.length === 0) {
-					game.restart();
+					return game.restart();
 				}
 				
 				brickCollision = true;
@@ -414,6 +427,8 @@ Ball.prototype.update = function() {
 	}
 
 	this.draw();
+	
+	return true;
 };
 
 Ball.prototype.draw = function() {
@@ -468,6 +483,7 @@ Paddle.prototype.getBounds = function() {
 
 Paddle.prototype.update = function() {
 	this.draw();
+	return true;
 };
 
 Paddle.prototype.draw = function() {
