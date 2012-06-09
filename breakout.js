@@ -39,14 +39,14 @@ var colors = {
 };
 
 var names = [
-	'Chronic Rehab', 'brought to', 'you by:', 'Peter Norby', 'Scott Schiller', 'Zack Sheppard',
-	'Daniel Bogan', 'David Fusco', 'Phil Yu', 'Kay Kremerskothen', 'Jenny Mette',
-	'Ross Harmes', 'Timothy Denike', 'Phil King', 'Daniel Eiba', 'Denise Leung',
-	'Trevor Hartsell', 'Eric Gelinas', 'Markus Spiering', 'Henry Lyne', 'Stephen Woods',
-	'Jamal Fanaian', 'Phillip Moore', 'Mike Deerkoski', 'Chris Berry', 'Sergey Morozov',
+	'Chronic Rehab', 'brought to', 'you by:', 'Peter Norby', 'Scott Schiller', 'Daniel Bogan',
+	'David Fusco', 'Emily Yiu', 'Phil Yu', 'Kay Kremerskothen', 'Jenny Mette', 'Ross Harmes',
+	'Timothy Denike', 'Phil King', 'Daniel Eiba', 'Denise Leung', 'Trevor Hartsell', 'Eric Gelinas',
+	'Markus Spiering', 'Henry Lyne', 'Stephen Woods', 'Jamal Fanaian', 'Chris Berry', 'Sergey Morozov',
 	'Cindy Li', 'Tim Miller', 'Brad Peralta', 'Chris Hamilton', 'Matt Jennings', 'Peter Welch',
 	'Phil Dokas', 'Hugo Haas', 'Marc Perry', 'William Stubbs', 'Georges Haddad',
-	'Joshua Cohen'
+	'Joshua Cohen', 'Erin Wermuth', 'John Ubante', 'Brett Wayn', 'Anna Thomas',
+	'Sean Perkins'
 ];
 
 
@@ -316,8 +316,8 @@ Ball.prototype.update = function() {
 			if (this.y + this.vy + this.r > brick.y
 				&& this.y + this.vy - this.r < brick.y + brick.h
 				&& this.x + this.vx + this.r > brick.x
-				&& this.x + this.vx - this.r < brick.x + brick.w)
-			{
+				&& this.x + this.vx - this.r < brick.x + brick.w
+			) {
 				//
 				// Side collision
 				//
@@ -363,8 +363,8 @@ Ball.prototype.update = function() {
 		//
 		if (this.y + this.vy + this.r >= paddle.y
 			&& this.x + this.vx + this.r > paddle.x
-			&& this.x + this.vx - this.r < paddle.x + paddle.w)
-		{
+			&& this.x + this.vx - this.r < paddle.x + paddle.w
+		) {
 			var paddlePos = paddle.getBounds();
 			var percentFromPaddleCenter = 2 * ((this.x - paddlePos.x) / paddlePos.w - 0.5);
 		
