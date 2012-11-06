@@ -140,7 +140,7 @@ Game.prototype.makeNewBall = function() {
 	var ball = new Ball({
 		r: 3,
 		x: this.w / 2, y: this.h - 87,
-		vx: 0, vy: 3,
+		vx: 0, vy: 2.5,
 		color: Math.random() > 0.5 ? colors.pink : colors.blue
 	});
 	
@@ -149,23 +149,23 @@ Game.prototype.makeNewBall = function() {
 
 Game.prototype.makeBrickWall = function() {
 	var game = this,
-		wall = [],
-		row  = [],
-		brick,
-		
-		brickX       = 3,
-		brickY       = 32,
-		brickGutterX = 1,
-		brickGutterY = 6,
-		brickHeight  = 12,
-		rowWidth     = game.w - 3;
+	    wall = [],
+	    row  = [],
+	    brick,
+	    
+	    brickX       = 3,
+	    brickY       = 32,
+	    brickGutterX = 1,
+	    brickGutterY = 6,
+	    brickHeight  = 12,
+	    rowWidth     = game.w - 3;
 	
-	names.forEach(function(name, i) {
-		var extraWidthPerBrick,
-			brickIsTooWideForRow = false,
-			brickIsTheFinalBrick = false,
-			brickToMove,
-			j;
+	for (var i = 0, len = names.length; i < len; i++) {
+		var name = names[i],
+		    extraWidthPerBrick,
+		    brickIsTooWideForRow = false,
+		    brickIsTheFinalBrick = false,
+		    brickToMove;
 		
 		brick = new Brick({
 			x: brickX,
@@ -197,7 +197,7 @@ Game.prototype.makeBrickWall = function() {
 			//
 			// Spread out bricks
 			//
-			for (j = row.length - 1; j > 0; j--) {
+			for (var j = row.length - 1; j > 0; j--) {
 				brickToMove = row[j];
 				brickToMove.moveTo(brickToMove.x + j * extraWidthPerBrick, brickToMove.y, true);
 				brickToMove.draw();
@@ -227,7 +227,7 @@ Game.prototype.makeBrickWall = function() {
 		}
 		
 		brick.draw();
-	});
+	}
 	
 	return wall;
 };
@@ -469,9 +469,7 @@ function Paddle(opt) {
 Paddle.prototype.mouseMoved = function(e) {
 	var x = e.pageX - elt.offsetLeft;
 
-	if (x <= game.w - this.w && x > 0) {
-		this.x = x;
-	}
+	this.x = Math.max(Math.min(x, game.w - this.w), 0);
 };
 
 Paddle.prototype.getBounds = function() {
